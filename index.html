@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Globe Street Tech — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --border: rgba(255,255,255,0.07);
+      --accent: #c8a96e;
+      --accent-dim: rgba(200,169,110,0.15);
+      --text: #e8e4dc;
+      --muted: #7a7870;
+      --white: #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* Header */
+    header {
+      padding: 2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(20px);
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .logo span {
+      color: var(--muted);
+    }
+
+    nav a {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      margin-left: 2.5rem;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--text); }
+
+    /* Hero */
+    .hero {
+      padding: 8rem 4rem 6rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 900;
+      line-height: 1.0;
+      color: var(--white);
+      margin-bottom: 2rem;
+      max-width: 14ch;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-desc {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--muted);
+      max-width: 50ch;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* Divider */
+    .section-header {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 4rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Projects Grid */
+    .projects {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 4rem 8rem;
+    }
+
+    .project-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 1.5px;
+      background: var(--surface);
+      transition: border-color 0.3s;
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    .project-card:nth-child(1) { animation-delay: 0.1s; }
+    .project-card:nth-child(2) { animation-delay: 0.2s; }
+    .project-card:nth-child(3) { animation-delay: 0.3s; }
+    .project-card:nth-child(4) { animation-delay: 0.4s; }
+    .project-card:nth-child(5) { animation-delay: 0.5s; }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .project-card:hover {
+      border-color: rgba(200,169,110,0.3);
+    }
+
+    .project-card:hover .card-visual {
+      transform: scale(1.02);
+    }
+
+    /* Full-width card */
+    .project-card.full {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .card-body {
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .card-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    .card-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 0.25rem 0.75rem;
+      border-radius: 100px;
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .card-desc {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      flex: 1;
+    }
+
+    .card-tech {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .tech-pill {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.6rem;
+      border-radius: 2px;
+    }
+
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: gap 0.2s;
+    }
+
+    .card-link:hover { gap: 1rem; }
+
+    .card-link-arrow {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .card-link:hover .card-link-arrow {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* Visual panel */
+    .card-visual-wrap {
+      overflow: hidden;
+      position: relative;
+      min-height: 300px;
+    }
+
+    .card-visual {
+      width: 100%;
+      height: 100%;
+      min-height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.6s ease;
+    }
+
+    /* Project-specific visual themes */
+    .vis-reading {
+      background: linear-gradient(135deg, #001e5a 0%, #003087 50%, #c1002a 100%);
+    }
+
+    .vis-trivia {
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #2d2d6b 100%);
+    }
+
+    .vis-ellie {
+      background: linear-gradient(135deg, #1a0a0f 0%, #2d0f1a 50%, #8b3a5a 100%);
+    }
+
+    .vis-property {
+      background: linear-gradient(135deg, #0a1628 0%, #0d2040 50%, #1a3a6b 100%);
+    }
+
+    .vis-nemo {
+      background: linear-gradient(135deg, #0a1a0a 0%, #0f2a0f 50%, #1a4a1a 100%);
+    }
+
+    .vis-icon {
+      font-size: 5rem;
+      opacity: 0.8;
+      filter: drop-shadow(0 0 40px rgba(255,255,255,0.15));
+    }
+
+    /* Two-col smaller cards */
+    .projects-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5px;
+      margin-bottom: 1.5px;
+    }
+
+    .projects-grid-2 .project-card {
+      grid-template-columns: 1fr;
+      margin-bottom: 0;
+    }
+
+    .projects-grid-2 .card-visual-wrap {
+      min-height: 200px;
+    }
+
+    .projects-grid-2 .card-visual {
+      min-height: 200px;
+    }
+
+    .projects-grid-2 .card-body {
+      padding: 2rem;
+    }
+
+    .projects-grid-2 .card-title {
+      font-size: 1.4rem;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-copy {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .footer-contact a {
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* Subtle decorative line across hero */
+    .hero-rule {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 5rem 0 5rem;
+    }
+
+    @media (max-width: 768px) {
+      header { padding: 1.5rem 1.5rem; }
+      nav { display: none; }
+      .hero { padding: 4rem 1.5rem 3rem; }
+      .projects { padding: 0 1.5rem 4rem; }
+      .section-header { padding: 0 1.5rem; }
+      .project-card, .project-card.full { grid-template-columns: 1fr; }
+      .card-visual-wrap { min-height: 180px; }
+      .projects-grid-2 { grid-template-columns: 1fr; }
+      .hero-stats { gap: 2rem; }
+      footer { padding: 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Globe<span>/</span>Street<span> · </span>Tech</div>
+    <nav>
+      <a href="#projects">Work</a>
+      <a href="https://globestreet.com" target="_blank">Company</a>
+      <a href="mailto:hello@globestreet.com">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-eyebrow">AI-Powered Product Portfolio</div>
+    <h1>Built with <em>intelligence,</em> shipped for impact.</h1>
+    <p class="hero-desc">
+      Globe Street Tech builds AI-native digital products across sports, publishing, property, and enterprise — from proof of concept to production.
+    </p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">5+</span>
+        <span class="stat-label">Live Products</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">4</span>
+        <span class="stat-label">Industries</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">AI</span>
+        <span class="stat-label">Native Stack</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="hero-rule" style="max-width:1200px;margin:0 auto 4rem;padding:0 4rem;"></div>
+
+  <div class="section-header">
+    <span class="section-label">Selected Work</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="projects">
+
+    <!-- Reading FC — Full width -->
+    <div class="project-card full">
+      <div class="card-body">
+        <div>
+          <div class="card-meta">
+            <span class="card-number">01</span>
+            <span class="card-tag">Sports · Fan Engagement</span>
+          </div>
+          <h2 class="card-title">Reading FC Fan Portal</h2>
+          <p class="card-desc">
+            A proof-of-concept fan engagement platform for The Royals. Fixtures, ticket purchasing flows, and an embedded trivia challenge — all branded for the Select Car Leasing Stadium matchday experience.
+          </p>
+          <div class="card-tech">
+            <span class="tech-pill">HTML / CSS / JS</span>
+            <span class="tech-pill">GStreet Trivia Engine</span>
+            <span class="tech-pill">GitHub Pages</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:center;">
+          <a class="card-link" href="https://gstreet-ops.github.io/reading-fc-tickets/" target="_blank">
+            Fan Portal
+            <span class="card-link-arrow">↗</span>
+          </a>
+          <a class="card-link" href="https://gstreet-ops.github.io/reading-fc-tickets/quiz.html" target="_blank">
+            Trivia Quiz
+            <span class="card-link-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+      <div class="card-visual-wrap">
+        <div class="card-visual vis-reading">
+          <span class="vis-icon">⚽</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2-col grid -->
+    <div class="projects-grid-2">
+
+      <!-- GStreet Trivia App -->
+      <div class="project-card">
+        <div class="card-visual-wrap">
+          <div class="card-visual vis-trivia">
+            <span class="vis-icon">🧠</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="card-meta">
+              <span class="card-number">02</span>
+              <span class="card-tag">SaaS · Trivia Platform</span>
+            </div>
+            <h2 class="card-title">GStreet Trivia</h2>
+            <p class="card-desc">
+              The core trivia engine powering embeddable quiz experiences across client verticals. React + Supabase with leaderboards, categories, and lifeline mechanics.
+            </p>
+            <div class="card-tech">
+              <span class="tech-pill">React</span>
+              <span class="tech-pill">Supabase</span>
+              <span class="tech-pill">GitHub Pages</span>
+            </div>
+          </div>
+          <a class="card-link" href="https://gstreet-ops.github.io/trivia-app/" target="_blank">
+            Launch App <span class="card-link-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Ellie Hallaron -->
+      <div class="project-card">
+        <div class="card-visual-wrap">
+          <div class="card-visual vis-ellie">
+            <span class="vis-icon">📚</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="card-meta">
+              <span class="card-number">03</span>
+              <span class="card-tag">Publishing · Author Brand</span>
+            </div>
+            <h2 class="card-title">Ellie Hallaron</h2>
+            <p class="card-desc">
+              Full author website for dark romance novelist Ellie Hallaron — featuring The Syndicate Series, book shop, newsletter, and fan community hub.
+            </p>
+            <div class="card-tech">
+              <span class="tech-pill">HTML / CSS / JS</span>
+              <span class="tech-pill">GitHub Pages</span>
+            </div>
+          </div>
+          <a class="card-link" href="https://gstreet-ops.github.io/ellie-hallaron-website/" target="_blank">
+            Visit Site <span class="card-link-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Property Maintenance — Full width reversed -->
+    <div class="project-card full">
+      <div class="card-visual-wrap">
+        <div class="card-visual vis-property">
+          <span class="vis-icon">🏠</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="card-meta">
+            <span class="card-number">04</span>
+            <span class="card-tag">PropTech · Operations</span>
+          </div>
+          <h2 class="card-title">Property Maintenance Platform</h2>
+          <p class="card-desc">
+            A React-based property operations dashboard for managing tasks, maintenance schedules, vendor tracking, calendar bookings, and revenue analytics across a portfolio of rental properties.
+          </p>
+          <div class="card-tech">
+            <span class="tech-pill">React</span>
+            <span class="tech-pill">Recharts</span>
+            <span class="tech-pill">Vercel</span>
+            <span class="tech-pill">Supabase</span>
+          </div>
+        </div>
+        <a class="card-link" href="https://property-maintenance-two.vercel.app/" target="_blank">
+          View Platform <span class="card-link-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Nemo Security -->
+    <div class="project-card full">
+      <div class="card-body">
+        <div>
+          <div class="card-meta">
+            <span class="card-number">05</span>
+            <span class="card-tag">Security · Enterprise</span>
+          </div>
+          <h2 class="card-title">Nemo Security</h2>
+          <p class="card-desc">
+            Enterprise security product built on Next.js, deployed to production on Vercel. Part of Globe Street Tech's growing suite of AI-native B2B software.
+          </p>
+          <div class="card-tech">
+            <span class="tech-pill">Next.js</span>
+            <span class="tech-pill">Vercel</span>
+            <span class="tech-pill">AI-Native</span>
+          </div>
+        </div>
+        <a class="card-link" href="https://nemo-security.vercel.app/" target="_blank">
+          View Product <span class="card-link-arrow">↗</span>
+        </a>
+      </div>
+      <div class="card-visual-wrap">
+        <div class="card-visual vis-nemo">
+          <span class="vis-icon">🔒</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <span class="footer-copy">© 2026 Globe Street Tech · AI Product Studio</span>
+    <div class="footer-contact">
+      <a href="https://globestreet.com" target="_blank">globestreet.com →</a>
+    </div>
+  </footer>
+
+</body>
+</html>
